@@ -47,6 +47,8 @@ public final class LuceneIndexer implements AutoCloseable {
 
     /**
      * Add content to a Lucene index, including segment including metadata and token count.
+     * <br/>
+     * IMPORTANT: Token counts are approximate, and do not include metadata.
      *
      * @param content Text segment including metadata
      */
