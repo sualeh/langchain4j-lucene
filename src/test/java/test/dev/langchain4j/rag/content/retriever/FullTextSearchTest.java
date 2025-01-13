@@ -22,9 +22,25 @@ import org.junit.jupiter.api.Test;
 
 public class FullTextSearchTest {
 
+    private static final TextSegment[] hitTextSegments = {
+        TextSegment.from("Lucene is a powerful search library.", metadataName("doc1")),
+        TextSegment.from("Is Lucinity is not a library?", metadataName("doc2")),
+        TextSegment.from("BM25Similarity is the default search term similarity algorithm.", metadataName("doc3")),
+    };
+    private static final TextSegment[] missTextSegments = {
+        TextSegment.from("Aaaaah - some random text here.", metadataName("miss1"))
+    };
+    private static final Query query = Query.from("Give me information on the lucine search library");
+
+    private static Metadata metadataName(final String name) {
+        final Metadata metadata = new Metadata();
+        metadata.put("name", name);
+        return metadata;
+    }
+
+    private Directory directory;
     private LuceneIndexer indexer;
     private LuceneContentRetriever contentRetriever;
-    private Directory directory;
 
     @Test
     public void query1() {
@@ -34,20 +50,13 @@ public class FullTextSearchTest {
                 .directory(directory)
                 .build();
 
-        final TextSegment[] hitTextSegments = {
-            TextSegment.from("Lucene is a powerful search library.", metadataName("doc1")),
-            TextSegment.from("Is Lucinity is not a library?", metadataName("doc2")),
-            TextSegment.from("BM25Similarity is the default search term similarity algorithm.", metadataName("doc3")),
-        };
-
         for (final TextSegment textSegment : hitTextSegments) {
             indexer.addContent(textSegment);
         }
         final List<String> expectedTextSegments = new ArrayList<>();
         expectedTextSegments.add(hitTextSegments[2].text());
 
-        final List<Content> results =
-                contentRetriever.retrieve(Query.from("Give me information on the lucine search library"));
+        final List<Content> results = contentRetriever.retrieve(query);
         final List<String> actualTextSegments =
                 results.stream().map(content -> content.textSegment().text()).collect(Collectors.toList());
         Collections.sort(actualTextSegments);
@@ -64,15 +73,6 @@ public class FullTextSearchTest {
                 .directory(directory)
                 .build();
 
-        final TextSegment[] hitTextSegments = {
-            TextSegment.from("Lucene is a powerful search library.", metadataName("doc1")),
-            TextSegment.from("Is Lucinity is not a library?", metadataName("doc2")),
-            TextSegment.from("BM25Similarity is the default search term similarity algorithm.", metadataName("doc3")),
-        };
-        final TextSegment[] missTextSegments = {
-            TextSegment.from("Aaaaah - some random text here.", metadataName("miss1"))
-        };
-
         final List<String> expectedTextSegments = new ArrayList<>();
         for (final TextSegment textSegment : hitTextSegments) {
             indexer.addContent(textSegment);
@@ -84,8 +84,7 @@ public class FullTextSearchTest {
         }
         Collections.sort(expectedTextSegments);
 
-        final List<Content> results =
-                contentRetriever.retrieve(Query.from("Give me information on the lucine search library"));
+        final List<Content> results = contentRetriever.retrieve(query);
         final List<String> actualTextSegments =
                 results.stream().map(content -> content.textSegment().text()).collect(Collectors.toList());
         Collections.sort(actualTextSegments);
@@ -99,15 +98,6 @@ public class FullTextSearchTest {
 
         contentRetriever = LuceneContentRetriever.builder().directory(directory).build();
 
-        final TextSegment[] hitTextSegments = {
-            TextSegment.from("Lucene is a powerful search library.", metadataName("doc1")),
-            TextSegment.from("Is Lucinity is not a library?", metadataName("doc2")),
-            TextSegment.from("BM25Similarity is the default search term similarity algorithm.", metadataName("doc3")),
-        };
-        final TextSegment[] missTextSegments = {
-            TextSegment.from("Aaaaah - some random text here.", metadataName("miss1"))
-        };
-
         final List<String> expectedTextSegments = new ArrayList<>();
         for (final TextSegment textSegment : hitTextSegments) {
             indexer.addContent(textSegment);
@@ -118,8 +108,7 @@ public class FullTextSearchTest {
         }
         Collections.sort(expectedTextSegments);
 
-        final List<Content> results =
-                contentRetriever.retrieve(Query.from("Give me information on the lucine search library"));
+        final List<Content> results = contentRetriever.retrieve(query);
         final List<String> actualTextSegments =
                 results.stream().map(content -> content.textSegment().text()).collect(Collectors.toList());
         Collections.sort(actualTextSegments);
@@ -136,20 +125,13 @@ public class FullTextSearchTest {
                 .directory(directory)
                 .build();
 
-        final TextSegment[] hitTextSegments = {
-            TextSegment.from("Lucene is a powerful search library.", metadataName("doc1")),
-            TextSegment.from("Is Lucinity is not a library?", metadataName("doc2")),
-            TextSegment.from("BM25Similarity is the default search term similarity algorithm.", metadataName("doc3")),
-        };
-
         for (final TextSegment textSegment : hitTextSegments) {
             indexer.addContent(textSegment);
         }
         final List<String> expectedTextSegments = new ArrayList<>();
         expectedTextSegments.add(hitTextSegments[0].text());
 
-        final List<Content> results =
-                contentRetriever.retrieve(Query.from("Give me information on the lucine search library"));
+        final List<Content> results = contentRetriever.retrieve(query);
         final List<String> actualTextSegments =
                 results.stream().map(content -> content.textSegment().text()).collect(Collectors.toList());
         Collections.sort(actualTextSegments);
@@ -169,11 +151,5 @@ public class FullTextSearchTest {
         indexer.close();
         contentRetriever.close();
         directory.close();
-    }
-
-    private Metadata metadataName(final String name) {
-        final Metadata metadata = new Metadata();
-        metadata.put("name", name);
-        return metadata;
     }
 }
