@@ -16,6 +16,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.StoredValue;
+import org.apache.lucene.document.StoredValue.Type;
 import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.StoredFields;
@@ -228,7 +230,28 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
             if (LuceneIndexer.CONTENT.equals(fieldName)) {
                 continue;
             }
-            metadata.put(fieldName, field.stringValue());
+
+            final StoredValue storedValue = field.storedValue();
+            final Type type = storedValue.getType();
+            switch (type) {
+                case INTEGER:
+                    metadata.put(fieldName, storedValue.getIntValue());
+                    break;
+                case LONG:
+                    metadata.put(fieldName, storedValue.getLongValue());
+                    break;
+                case FLOAT:
+                    metadata.put(fieldName, storedValue.getFloatValue());
+                    break;
+                case DOUBLE:
+                    metadata.put(fieldName, storedValue.getDoubleValue());
+                    break;
+                case STRING:
+                    metadata.put(fieldName, storedValue.getStringValue());
+                    break;
+                default:
+                    // No-op
+            }
         }
         return metadata;
     }
