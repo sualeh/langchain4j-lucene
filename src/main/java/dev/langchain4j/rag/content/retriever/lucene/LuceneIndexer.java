@@ -27,7 +27,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 
 /**
- * Luncene indexer for LangChain4J content (in the form of `TextSegment`).
+ * Lucene indexer for LangChain4J content (in the form of `TextSegment`).
  */
 public final class LuceneIndexer implements AutoCloseable {
 
