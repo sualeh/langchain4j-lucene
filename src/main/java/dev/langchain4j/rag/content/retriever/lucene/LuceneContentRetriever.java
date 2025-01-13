@@ -37,6 +37,9 @@ import org.apache.lucene.store.Directory;
  */
 public final class LuceneContentRetriever implements ContentRetriever, AutoCloseable {
 
+    /**
+     * Builder for `LuceneContentRetriever`.
+     */
     public static class LuceneContentRetrieverBuilder {
 
         private Directory directory;
@@ -51,6 +54,11 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
             maxTokens = Integer.MAX_VALUE;
         }
 
+        /**
+         * Build an instance of `LuceneContentRetriever` using internal builder field values.
+         *
+         * @return New instance of `LuceneContentRetriever`
+         */
         public LuceneContentRetriever build() {
             if (directory == null) {
                 directory = DirectoryFactory.tempDirectory();
@@ -122,6 +130,11 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
 
     private static final Logger LOGGER = Logger.getLogger(LuceneContentRetriever.class.getCanonicalName());
 
+    /**
+     * Instantiate a builder for `LuceneContentRetriever`.
+     *
+     * @return Builder for `LuceneContentRetriever`
+     */
     public static LuceneContentRetrieverBuilder builder() {
         return new LuceneContentRetrieverBuilder();
     }

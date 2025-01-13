@@ -22,7 +22,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 
 /**
- * Luncene indexer for LangChain4J content (in the form of TextSegment).
+ * Luncene indexer for LangChain4J content (in the form of `TextSegment`).
  */
 public final class LuceneIndexer implements AutoCloseable {
 
@@ -34,12 +34,22 @@ public final class LuceneIndexer implements AutoCloseable {
     private final Directory directory;
     private final Encoding encoding;
 
+    /**
+     * Instantiate a new indexer to add content to an index based on a Lucene directory.
+     *
+     * @param directory Lucene directory
+     */
     public LuceneIndexer(final Directory directory) {
         this.directory = requireNonNull(directory, "No directory provided");
         final EncodingRegistry registry = Encodings.newDefaultEncodingRegistry();
         encoding = registry.getEncoding(EncodingType.CL100K_BASE);
     }
 
+    /**
+     * Add content to a Lucene index, including segment including metadata and token count.
+     *
+     * @param content Text segment including metadata
+     */
     public void addContent(final TextSegment content) {
         if (content == null) {
             return;
@@ -64,6 +74,9 @@ public final class LuceneIndexer implements AutoCloseable {
         }
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void close() throws Exception {
         if (directory != null) {
