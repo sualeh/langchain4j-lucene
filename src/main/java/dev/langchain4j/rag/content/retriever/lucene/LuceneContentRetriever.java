@@ -21,7 +21,7 @@ import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.StoredFields;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
-import org.apache.lucene.search.BooleanClause;
+import org.apache.lucene.search.BooleanClause.Occur;
 import org.apache.lucene.search.BooleanQuery;
 import org.apache.lucene.search.FieldDoc;
 import org.apache.lucene.search.IndexSearcher;
@@ -213,12 +213,14 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
     private Query buildQuery(final String query) throws ParseException {
         final QueryParser parser = new QueryParser(CONTENT, new StandardAnalyzer());
         final Query fullTextQuery = parser.parse(query);
-
-        final BooleanQuery.Builder builder = new BooleanQuery.Builder().add(fullTextQuery, BooleanClause.Occur.SHOULD);
-        if (!onlyMatches) {
-            builder.add(new MatchAllDocsQuery(), BooleanClause.Occur.SHOULD);
+        if (onlyMatches) {
+            return fullTextQuery;
         }
-        final BooleanQuery combinedQuery = builder.build();
+
+        final BooleanQuery combinedQuery = new BooleanQuery.Builder()
+                .add(fullTextQuery, Occur.SHOULD)
+                .add(new MatchAllDocsQuery(), Occur.SHOULD)
+                .build();
         return combinedQuery;
     }
 
