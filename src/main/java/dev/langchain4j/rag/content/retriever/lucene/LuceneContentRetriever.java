@@ -32,6 +32,9 @@ import org.apache.lucene.search.Sort;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.store.Directory;
 
+/**
+ * Full-text content retrieval using Apache Lucene for LangChain4J RAG.
+ */
 public final class LuceneContentRetriever implements ContentRetriever, AutoCloseable {
 
     public static class LuceneContentRetrieverBuilder {
