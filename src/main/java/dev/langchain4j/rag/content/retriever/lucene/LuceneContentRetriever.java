@@ -125,9 +125,6 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
         }
     }
 
-    private static final String CONTENT = "content";
-    private static final String TOKEN_COUNT = "token-count";
-
     private static final Logger LOGGER = Logger.getLogger(LuceneContentRetriever.class.getCanonicalName());
 
     /**
@@ -187,7 +184,7 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
                 final Document document = storedFields.document(scoreDoc.doc);
 
                 // Check if maximum token count is exceeded
-                final IndexableField tokenCountField = document.getField(TOKEN_COUNT);
+                final IndexableField tokenCountField = document.getField(LuceneIndexer.TOKEN_COUNT);
                 final int docTokens = tokenCountField.numericValue().intValue();
                 if (tokenCount + docTokens > maxTokens) {
                     continue;
@@ -199,7 +196,7 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
                 final Metadata metadata = createTextSegmentMetadata(document);
 
                 // Finally create the text segment
-                final TextSegment textSegment = TextSegment.from(document.get(CONTENT), metadata);
+                final TextSegment textSegment = TextSegment.from(document.get(LuceneIndexer.CONTENT), metadata);
 
                 hits.add(Content.from(textSegment, withScore(scoreDoc)));
             }
@@ -211,7 +208,7 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
     }
 
     private Query buildQuery(final String query) throws ParseException {
-        final QueryParser parser = new QueryParser(CONTENT, new StandardAnalyzer());
+        final QueryParser parser = new QueryParser(LuceneIndexer.CONTENT, new StandardAnalyzer());
         final Query fullTextQuery = parser.parse(query);
         if (onlyMatches) {
             return fullTextQuery;
@@ -228,7 +225,7 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
         final Metadata metadata = new Metadata();
         for (final IndexableField field : document) {
             final String fieldName = field.name();
-            if (CONTENT.equals(fieldName)) {
+            if (LuceneIndexer.CONTENT.equals(fieldName)) {
                 continue;
             }
             metadata.put(fieldName, field.stringValue());

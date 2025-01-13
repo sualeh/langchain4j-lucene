@@ -26,8 +26,8 @@ import org.apache.lucene.store.Directory;
  */
 public final class LuceneIndexer implements AutoCloseable {
 
-    private static final String CONTENT = "content";
-    private static final String TOKEN_COUNT = "token-count";
+    static final String CONTENT = "content";
+    static final String TOKEN_COUNT = "token-count";
 
     private static final Logger LOGGER = Logger.getLogger(LuceneIndexer.class.getCanonicalName());
 
