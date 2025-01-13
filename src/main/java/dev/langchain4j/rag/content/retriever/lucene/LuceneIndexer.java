@@ -14,8 +14,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.DoubleField;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.Field.Store;
+import org.apache.lucene.document.FloatField;
 import org.apache.lucene.document.IntField;
+import org.apache.lucene.document.LongField;
+import org.apache.lucene.document.StringField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -46,8 +51,7 @@ public final class LuceneIndexer implements AutoCloseable {
     }
 
     /**
-     * Add content to a Lucene index, including segment including metadata and token count.
-     * <br/>
+     * Add content to a Lucene index, including segment including metadata and token count. <br/>
      * IMPORTANT: Token counts are approximate, and do not include metadata.
      *
      * @param content Text segment including metadata
@@ -67,7 +71,7 @@ public final class LuceneIndexer implements AutoCloseable {
             final Map<String, Object> metadataMap = content.metadata().toMap();
             if (metadataMap != null) {
                 for (final Entry<String, Object> entry : metadataMap.entrySet()) {
-                    doc.add(new TextField(entry.getKey(), String.valueOf(entry.getValue()), Field.Store.YES));
+                    doc.add(toField(entry));
                 }
             }
             writer.addDocument(doc);
@@ -84,5 +88,25 @@ public final class LuceneIndexer implements AutoCloseable {
         if (directory != null) {
             directory.close();
         }
+    }
+
+    private Field toField(final Entry<String, Object> entry) {
+        final String fieldName = entry.getKey();
+        final var fieldValue = entry.getValue();
+        final Field field;
+        if (fieldValue instanceof final String string) {
+            field = new StringField(fieldName, string, Store.YES);
+        } else if (fieldValue instanceof final Integer number) {
+            field = new IntField(fieldName, number, Store.YES);
+        } else if (fieldValue instanceof final Long number) {
+            field = new LongField(fieldName, number, Store.YES);
+        } else if (fieldValue instanceof final Float number) {
+            field = new FloatField(fieldName, number, Store.YES);
+        } else if (fieldValue instanceof final Double number) {
+            field = new DoubleField(fieldName, number, Store.YES);
+        } else {
+            field = new StringField(fieldName, String.valueOf(fieldValue), Store.YES);
+        }
+        return field;
     }
 }
