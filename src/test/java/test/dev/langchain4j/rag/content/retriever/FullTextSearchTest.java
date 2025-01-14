@@ -148,8 +148,6 @@ public class FullTextSearchTest {
 
     @AfterEach
     public void tearDown() throws Exception {
-        indexer.close();
-        contentRetriever.close();
         directory.close();
     }
 }

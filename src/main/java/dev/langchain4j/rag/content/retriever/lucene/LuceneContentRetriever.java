@@ -37,7 +37,7 @@ import org.apache.lucene.store.Directory;
 /**
  * Full-text content retrieval using Apache Lucene for LangChain4J RAG.
  */
-public final class LuceneContentRetriever implements ContentRetriever, AutoCloseable {
+public final class LuceneContentRetriever implements ContentRetriever {
 
     /**
      * Builder for `LuceneContentRetriever`.
@@ -149,13 +149,6 @@ public final class LuceneContentRetriever implements ContentRetriever, AutoClose
         this.onlyMatches = onlyMatches;
         this.topNMatches = Math.max(0, topNMatches);
         this.maxTokens = Math.max(0, maxTokens);
-    }
-
-    @Override
-    public void close() throws Exception {
-        if (directory != null) {
-            directory.close();
-        }
     }
 
     /** {@inheritDoc} */

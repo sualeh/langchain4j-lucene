@@ -29,7 +29,7 @@ import org.apache.lucene.store.Directory;
 /**
  * Lucene indexer for LangChain4J content (in the form of `TextSegment`).
  */
-public final class LuceneIndexer implements AutoCloseable {
+public final class LuceneIndexer {
 
     static final String CONTENT = "content";
     static final String TOKEN_COUNT = "token-count";
@@ -77,16 +77,6 @@ public final class LuceneIndexer implements AutoCloseable {
             writer.addDocument(doc);
         } catch (final IOException e) {
             LOGGER.log(Level.INFO, String.format("Could not write content%n%s", content), e);
-        }
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void close() throws Exception {
-        if (directory != null) {
-            directory.close();
         }
     }
 
